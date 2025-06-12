@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Content Classification Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6 font-sans">
+  <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6">
+    <h1 class="text-3xl font-bold text-center mb-6 text-purple-700">URL Content Classifier</h1>
+
+    <!-- URL Input -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <input id="urlInput" type="text" placeholder="Enter a website URL..."
+        class="flex-1 border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400">
+      <button onclick="analyzeURL()"
+        class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition">Analyze</button>
+    </div>
+
+    <!-- Final Verdict -->
+    <div id="verdictCard" class="hidden mb-6 p-4 rounded-xl text-center shadow text-xl font-semibold">
+      <span id="verdictText"></span>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="grid grid-cols-1 sm:grid-cols-2 gap-6 hidden">
+      <!-- Hate Speech -->
+      <div class="bg-purple-100 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold mb-2 text-purple-700">🚫 Hate Speech</h2>
+        <p id="hateResult" class="text-gray-800">–</p>
+        <p id="hateConfidence" class="text-sm text-gray-600"></p>
+      </div>
+
+      <!-- Phishing Detection -->
+      <div class="bg-purple-100 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold mb-2 text-purple-700">🔗 Phishing</h2>
+        <p id="phishingResult" class="text-gray-800">–</p>
+        <p id="phishingConfidence" class="text-sm text-gray-600"></p>
+      </div>
+
+      <!-- Explicit Content -->
+      <div class="bg-purple-100 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold mb-2 text-purple-700">🔞 Explicit Content</h2>
+        <p id="explicitResult" class="text-gray-800">–</p>
+        <p id="explicitConfidence" class="text-sm text-gray-600"></p>
+      </div>
+
+      <!-- Gambling Image -->
+      <div class="bg-purple-100 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold mb-2 text-purple-700">🎰 Gambling</h2>
+        <img id="pageImage" src="" alt="Screenshot" class="mt-2 rounded-xl max-h-48 object-cover">
+        <p id="gamblingResult" class="text-gray-800 mt-2">–</p>
+        <p id="gamblingConfidence" class="text-sm text-gray-600"></p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center text-gray-600 mt-6 hidden">
+      ⏳ Processing...
+    </div>
+  </div>
+
+  <script>
+    async function analyzeURL() {
+      const url = document.getElementById("urlInput").value.trim();
+      if (!url) {
+        alert("Please enter a valid URL.");
+        return;
+      }
+
+      document.getElementById("loading").classList.remove("hidden");
+      document.getElementById("results").classList.add("hidden");
+      document.getElementById("verdictCard").classList.add("hidden");
+
+      try {
+        const response = await fetch("http://localhost:5000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("results").classList.remove("hidden");
+        document.getElementById("verdictCard").classList.remove("hidden");
+
+        // Populate results
+        document.getElementById("hateResult").textContent = data.hate_speech;
+        document.getElementById("hateConfidence").textContent = `Confidence: ${(data.hate_conf * 100).toFixed(2)}%`;
+
+        document.getElementById("explicitResult").textContent = data.explicit;
+        document.getElementById("explicitConfidence").textContent = `Confidence: ${(data.explicit_conf * 100).toFixed(2)}%`;
+
+        document.getElementById("phishingResult").textContent = data.phishing;
+        document.getElementById("phishingConfidence").textContent = `Confidence: ${(data.phishing_conf * 100).toFixed(2)}%`;
+
+        document.getElementById("gamblingResult").textContent = data.gambling;
+        document.getElementById("gamblingConfidence").textContent = `Confidence: ${(data.gambling_conf * 100).toFixed(2)}%`;
+
+        document.getElementById("pageImage").src = "data:image/png;base64," + data.image_base64;
+
+        // Verdict
+        const verdictText = document.getElementById("verdictText");
+        const verdictCard = document.getElementById("verdictCard");
+
+        if (data.safety_verdict === "Unsafe") {
+          verdictText.textContent = " This website is considered UNSAFE.";
+          verdictCard.classList.add("bg-red-200", "text-red-800");
+          verdictCard.classList.remove("bg-green-200", "text-green-800");
+        } else {
+          verdictText.textContent = " This website is considered SAFE.";
+          verdictCard.classList.add("bg-green-200", "text-green-800");
+          verdictCard.classList.remove("bg-red-200", "text-red-800");
+        }
+
+      } catch (error) {
+        document.getElementById("loading").classList.add("hidden");
+        alert("Error analyzing the URL. Please check backend is running and try again.");
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>

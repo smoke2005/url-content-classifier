@@ -1,0 +1,7 @@
+pandas
+scikit-learn
+joblib
+selenium
+webdriver-manager
+selenium-stealth
+beautifulsoup4
