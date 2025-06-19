@@ -5,3 +5,9 @@ selenium
 webdriver-manager
 selenium-stealth
 beautifulsoup4
+flask
+flask-cors
+tensorflow
+pillow
+numpy
+xgboost

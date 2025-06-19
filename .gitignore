@@ -192,3 +192,15 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Project-specific virtual environment
+venv_py311/
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+
+# Project-specific temporary files  
+page_text.txt
+page_ss.png

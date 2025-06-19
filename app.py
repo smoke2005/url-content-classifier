@@ -25,7 +25,7 @@ def clean_text(text):
     return text
 
 def predict_hatespeech(text):
-    model = joblib.load('models\\hatespeech_classifier_xgb.pkl')
+    model = joblib.load('models/hatespeech_classifier_xgb.pkl')
     cleaned = clean_text(text)
     proba = model.predict_proba([cleaned])[0]
     pred = model.predict([cleaned])[0]
@@ -34,7 +34,7 @@ def predict_hatespeech(text):
     return label, confidence
 
 def predict_url_phishing(url):
-    model = joblib.load('models\\url_phishing_model.pkl')
+    model = joblib.load('models/url_phishing_model.pkl')
     pred = model.predict([url])[0]
     prob = model.predict_proba([url])[0]
     label = "Phishing" if pred == 1 else "Legitimate"
@@ -42,8 +42,8 @@ def predict_url_phishing(url):
     return label, confidence
 
 def predict_explicit_content(text):
-    model = joblib.load('models\\adult_classifier.pkl')
-    vectorizer = joblib.load('models\\tfidf_vectorizer.pkl')
+    model = joblib.load('models/adult_classifier.pkl')
+    vectorizer = joblib.load('models/tfidf_vectorizer.pkl')
     cleaned = clean_text(text)
     vec = vectorizer.transform([cleaned])
     proba = model.predict_proba(vec)[0]
@@ -55,7 +55,7 @@ def predict_explicit_content(text):
 def predict_image_gambling(img_path):
     if not os.path.exists(img_path):
         raise FileNotFoundError(f"Image not found at: {img_path}")
-    model = load_model('models\\densenet_gambling_classifier_augmented.h5')
+    model = load_model('models/densenet_gambling_classifier_augmented.h5')
     img = image.load_img(img_path, target_size=IMG_SIZE)
     img_array = image.img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
