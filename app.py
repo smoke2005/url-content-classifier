@@ -15,7 +15,18 @@ TEXT_PATH = "page_text.txt"
 IMAGE_PATH = "page_ss.png"
 
 app = Flask(__name__)
-CORS(app)
+
+# Enhanced CORS configuration
+CORS(app, resources={
+    r"/analyze": {
+        "origins": ["http://localhost:8000", "http://127.0.0.1:8000"],
+        "methods": ["POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
+# Alternative: Simple CORS for all routes (if above doesn't work)
+# CORS(app, origins=['*'])
 
 def clean_text(text):
     text = str(text).lower()
@@ -71,13 +82,20 @@ def get_final_safety_verdict(hate, explicit, phishing, gambling):
         return "Unsafe"
     return "Safe"
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/analyze", methods=["POST"])
+@app.route("/analyze", methods=["POST", "OPTIONS"])
 def analyze():
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        response = jsonify({})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
+        return response
+    
     try:
         data = request.get_json()
         url = data.get("url")
@@ -117,4 +135,4 @@ def analyze():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
