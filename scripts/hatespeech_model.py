@@ -9,7 +9,7 @@ from sklearn.utils import resample
 import joblib
 
 # === Load and Clean Dataset ===
-df = pd.read_csv("C:\\Users\\mokit\\Downloads\\harmful_content_collection_scripts\\data\\HateSpeechDataset.csv")
+df = pd.read_csv("../data/HateSpeechDataset.csv")
 
 # Drop non-numeric labels
 df = df[df['Label'].apply(lambda x: str(x).isdigit())]
@@ -64,4 +64,4 @@ y_pred = pipeline.predict(X_test)
 print("Classification Report:\n", classification_report(y_test, y_pred))
 
 # === Save Model ===
-joblib.dump(pipeline, 'hatespeech_classifier_xgb.pkl')  
+joblib.dump(pipeline, '../models/hatespeech_classifier_xgb.pkl')  

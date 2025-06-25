@@ -42,5 +42,5 @@ def train_and_save_model(dataset_path):
 
 
 if __name__ == "__main__":
-    dataset_path = "C:\\Users\\mokit\\Downloads\\Copy of final_adult_content(1).csv"
+    dataset_path = "../data/Copy of final_adult_content(1).csv"
     train_and_save_model(dataset_path)

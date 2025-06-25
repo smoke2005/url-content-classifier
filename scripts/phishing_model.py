@@ -7,7 +7,7 @@ import pandas as pd
 import joblib
 
 # Load data
-df = pd.read_csv("C:\\Users\\mokit\\Downloads\\harmful_content_collection_scripts\\data\\dataset_phishing.csv")
+df = pd.read_csv("../data/dataset_phishing.csv")
 df['status'] = df['status'].map({'phishing': 1, 'legitimate': 0})
 
 # Split
@@ -26,4 +26,4 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 print(classification_report(y_test, y_pred))
 
-joblib.dump(model, '../model/url_phishing_model.pkl')
+joblib.dump(model, '../models/url_phishing_model.pkl')
