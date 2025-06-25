@@ -10,9 +10,9 @@ import os
 # === Config ===
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
-train_path = "C:\\Users\\mokit\\Downloads\\harmful_content_collection_scripts\\data\\train"
-val_path = "C:\\Users\\mokit\\Downloads\\harmful_content_collection_scripts\\data\\val"
-test_path = "C:\\Users\\mokit\\Downloads\\harmful_content_collection_scripts\\data\\test"
+train_path = "../data/train"
+val_path = "../data/val"
+test_path = "./data/test"
 
 # === Data Augmentation ===
 data_augmentation = tf.keras.Sequential([
